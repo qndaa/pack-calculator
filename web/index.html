@@ -234,10 +234,52 @@
     loadPacks();
 
     async function calculate() {
-        console.log("Calculate button clicked");
         const itemsInput = document.getElementById('items');
         const outputDiv = document.getElementById('output');
         const errorDiv = document.getElementById('error');
+
+        // Clear previous results
+        outputDiv.innerHTML = '';
+        errorDiv.innerHTML = '';
+
+        const items = parseInt(itemsInput.value);
+        if (!items || items <= 0) {
+            errorDiv.textContent = 'Please enter a valid number of items';
+            return;
+        }
+
+        try {
+            const response = await fetch('/calculate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ items: items })
+            });
+
+            if (!response.ok) {
+                const text = await response.text();
+                throw new Error(text || 'Calculation failed');
+            }
+
+            const data = await response.json();
+            
+            // Display results
+            if (data.packs && data.packs.length > 0) {
+                const totalItems = data.packs.reduce((sum, p) => sum + (p.value * p.quantity), 0);
+                const totalPacks = data.packs.reduce((sum, p) => sum + p.quantity, 0);
+                
+                outputDiv.innerHTML = `
+                    <strong>Result:</strong><br>
+                    ${data.packs.map(p => `${p.quantity} × ${p.value.toLocaleString()} pack`).join('<br>')}
+                    <br><br>
+                    <small>Total: ${totalItems.toLocaleString()} items in ${totalPacks} pack(s)</small>
+                `;
+            } else {
+                outputDiv.innerHTML = '<strong>No packs needed</strong>';
+            }
+        } catch (err) {
+            console.error('Calculate failed:', err);
+            errorDiv.textContent = err.message;
+        }
     }
 </script>
 
