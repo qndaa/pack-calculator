@@ -31,7 +31,7 @@ func TestCalculate(t *testing.T) {
 				Items: 1,
 			},
 			expected: &dto.CalculateResponse{
-				Packs: []dto.Pack{
+				Packs: []dto.PackResponse{
 					{Value: 250, Quantity: 1},
 				},
 			},
@@ -42,7 +42,7 @@ func TestCalculate(t *testing.T) {
 				Items: 250,
 			},
 			expected: &dto.CalculateResponse{
-				Packs: []dto.Pack{
+				Packs: []dto.PackResponse{
 					{Value: 250, Quantity: 1},
 				},
 			},
@@ -53,7 +53,7 @@ func TestCalculate(t *testing.T) {
 				Items: 251,
 			},
 			expected: &dto.CalculateResponse{
-				Packs: []dto.Pack{
+				Packs: []dto.PackResponse{
 					{Value: 500, Quantity: 1},
 				},
 			},
@@ -64,7 +64,7 @@ func TestCalculate(t *testing.T) {
 				Items: 501,
 			},
 			expected: &dto.CalculateResponse{
-				Packs: []dto.Pack{
+				Packs: []dto.PackResponse{
 					{Value: 500, Quantity: 1},
 					{Value: 250, Quantity: 1},
 				},
@@ -76,7 +76,7 @@ func TestCalculate(t *testing.T) {
 				Items: 12001,
 			},
 			expected: &dto.CalculateResponse{
-				Packs: []dto.Pack{
+				Packs: []dto.PackResponse{
 					{Value: 5000, Quantity: 2},
 					{Value: 2000, Quantity: 1},
 					{Value: 250, Quantity: 1},

@@ -17,13 +17,13 @@ func (r *CalculateRequest) Validate() error {
 	return nil
 }
 
-type Pack struct {
+type PackResponse struct {
 	Value    int `json:"value"`
 	Quantity int `json:"quantity"`
 }
 
 type CalculateResponse struct {
-	Packs []Pack `json:"packs"`
+	Packs []PackResponse `json:"packs"`
 }
 
 type GetPacksResponse struct {

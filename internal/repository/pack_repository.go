@@ -16,6 +16,6 @@ func NewPackRepository() (*PackRepository, error) {
 	}, nil
 }
 
-func (r *PackRepository) GetPacks() []int {
+func (r *PackRepository) GetPacks() domain.Packs {
 	return r.packs
 }
