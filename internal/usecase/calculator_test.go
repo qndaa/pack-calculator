@@ -33,7 +33,7 @@ func TestCalculate(t *testing.T) {
 
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			calculator := usecase.NewCalculator()
+			calculator := usecase.NewCalculator(nil) // TODO: inject mock PackRepository
 			response, err := calculator.Calculate(context.Background(), tc.input)
 			if err != nil {
 				t.Fatalf("Calculate() error = %v", err)

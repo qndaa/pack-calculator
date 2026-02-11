@@ -20,6 +20,7 @@ func NewHandler(calculatorUseCase interfaces.Calculator) *Handler {
 
 func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 	mux.HandleFunc("POST /calculate", h.calculate)
+	mux.HandleFunc("GET /packs", h.getPacks)
 
 	// Serve static UI
 	fs := http.FileServer(http.Dir("./web"))
@@ -39,6 +40,17 @@ func (h *Handler) calculate(w http.ResponseWriter, r *http.Request) {
 	}
 
 	result, err := h.calculatorUseCase.Calculate(r.Context(), &req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(result)
+}
+
+func (h *Handler) getPacks(w http.ResponseWriter, r *http.Request) {
+	result, err := h.calculatorUseCase.GetPacks(r.Context())
 	if err != nil {
 		http.Error(w, err.Error(), http.StatusInternalServerError)
 		return

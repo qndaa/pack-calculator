@@ -10,6 +10,7 @@ import (
 	"syscall"
 	"time"
 
+	"github.com/qndaa/pack-calculator/internal/repository"
 	"github.com/qndaa/pack-calculator/internal/server"
 	"github.com/qndaa/pack-calculator/internal/usecase"
 )
@@ -18,8 +19,15 @@ type App struct {
 	server *http.Server
 }
 
-func New() *App {
-	calculator := usecase.NewCalculator()
+func New() (*App, error) {
+	cfg := NewConfig()
+
+	packRepository, err := repository.NewPackRepository(cfg.repositoryConfig)
+	if err != nil {
+		return nil, err
+	}
+
+	calculator := usecase.NewCalculator(packRepository)
 	handler := server.NewHandler(calculator)
 
 	mux := http.NewServeMux()
@@ -30,7 +38,7 @@ func New() *App {
 			Addr:    ":8080",
 			Handler: mux,
 		},
-	}
+	}, nil
 }
 
 func (a *App) Run() error {

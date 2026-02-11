@@ -35,6 +35,7 @@
             font-size: 1rem;
             border-radius: 4px;
             border: 1px solid #ccc;
+            box-sizing: border-box;
         }
 
         button {
@@ -46,6 +47,7 @@
             background: #2c7be5;
             color: white;
             cursor: pointer;
+            box-sizing: border-box;
         }
 
         button:hover {
@@ -61,6 +63,46 @@
             color: red;
             margin-top: 1rem;
         }
+
+        .packs-list {
+            margin-bottom: 1.5rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 4px;
+        }
+
+        .packs-list h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .packs-list ul {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+        }
+
+        .packs-list li {
+            background: #e9ecef;
+            padding: 0.3rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.85rem;
+        }
+
+        .form-group {
+            margin-top: 1rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 0.9rem;
+            color: #666;
+        }
     </style>
 </head>
 <body>
@@ -68,7 +110,15 @@
 <div class="container">
     <h1>Pack Calculator</h1>
 
-    <input type="number" id="items" placeholder="Enter number of items" min="1" />
+    <div id="packs-container" class="packs-list">
+        <h3>Available Pack Sizes:</h3>
+        <ul id="packs-list"></ul>
+    </div>
+
+    <div class="form-group">
+        <label for="items">Number of Items:</label>
+        <input type="number" id="items" placeholder="Enter number of items" min="1" />
+    </div>
     <button onclick="calculate()">Calculate</button>
 
     <div id="output" class="result"></div>
@@ -76,6 +126,24 @@
 </div>
 
 <script>
+    // Load packs on page load
+    async function loadPacks() {
+        try {
+            const response = await fetch('/packs');
+            const data = await response.json();
+            const packsList = document.getElementById('packs-list');
+            packsList.innerHTML = data.packs
+                .sort((a, b) => a - b)
+                .map(pack => `<li>${pack.toLocaleString()} items</li>`)
+                .join('');
+        } catch (err) {
+            console.error('Failed to load packs:', err);
+        }
+    }
+
+    // Load packs when page loads
+    loadPacks();
+
     async function calculate() {
         console.log("Calculate button clicked");
         const itemsInput = document.getElementById('items');

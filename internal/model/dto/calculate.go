@@ -16,3 +16,7 @@ func (r *CalculateRequest) Validate() error {
 type CalculateResponse struct {
 	Packs map[int]int `json:"packs"`
 }
+
+type GetPacksResponse struct {
+	Packs []int `json:"packs"`
+}
