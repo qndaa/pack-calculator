@@ -1,0 +1,52 @@
+package app
+
+import (
+	"context"
+	"errors"
+	"log"
+	"net/http"
+	"os"
+	"os/signal"
+	"syscall"
+	"time"
+
+	"github.com/qndaa/pack-calculator/internal/server"
+)
+
+type App struct {
+	server *http.Server
+}
+
+func New() *App {
+	handler := server.NewHandler()
+
+	mux := http.NewServeMux()
+	handler.RegisterRoutes(mux)
+
+	return &App{
+		server: &http.Server{
+			Addr:    ":8080",
+			Handler: mux,
+		},
+	}
+}
+
+func (a *App) Run() error {
+	ctx, stop := signal.NotifyContext(context.Background(), os.Interrupt, syscall.SIGTERM)
+	defer stop()
+
+	go func() {
+		log.Println("Starting server on :8080")
+		if err := a.server.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			log.Fatalf("server error: %v", err)
+		}
+	}()
+
+	<-ctx.Done()
+	log.Println("Shutting down...")
+
+	shutdownCtx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
+	defer cancel()
+
+	return a.server.Shutdown(shutdownCtx)
+}
