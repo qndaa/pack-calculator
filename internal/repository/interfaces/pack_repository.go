@@ -6,4 +6,5 @@ type PackRepository interface {
 	FindAll() domain.Packs
 	Delete(size int) error
 	Create(size int) error
+	Set(packs domain.Packs)
 }

@@ -43,3 +43,7 @@ func (r *PackRepository) Create(size int) error {
 	r.packs = append(r.packs, size)
 	return nil
 }
+
+func (r *PackRepository) Set(packs domain.Packs) {
+	r.packs = packs
+}
