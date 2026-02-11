@@ -29,6 +29,12 @@ docker-compose up --build
 go test ./...
 ```
 
+### Run tests in Docker
+
+```bash
+docker-compose run --rm test
+```
+
 ## API Endpoints
 
 | Method | Endpoint | Description |
