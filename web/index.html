@@ -91,6 +91,25 @@
             padding: 0.3rem 0.6rem;
             border-radius: 4px;
             font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 0.4rem;
+        }
+
+        .packs-list li .delete-btn {
+            background: none;
+            border: none;
+            color: #dc3545;
+            cursor: pointer;
+            padding: 0;
+            font-size: 1rem;
+            line-height: 1;
+            width: auto;
+        }
+
+        .packs-list li .delete-btn:hover {
+            color: #a71d2a;
+            background: none;
         }
 
         .form-group {
@@ -103,6 +122,27 @@
             font-size: 0.9rem;
             color: #666;
         }
+
+        .add-pack-form {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+
+        .add-pack-form input {
+            flex: 1;
+            margin-bottom: 0;
+        }
+
+        .add-pack-form button {
+            width: auto;
+            padding: 0.6rem 1rem;
+            background: #28a745;
+        }
+
+        .add-pack-form button:hover {
+            background: #218838;
+        }
     </style>
 </head>
 <body>
@@ -113,6 +153,10 @@
     <div id="packs-container" class="packs-list">
         <h3>Available Pack Sizes:</h3>
         <ul id="packs-list"></ul>
+        <div class="add-pack-form">
+            <input type="number" id="new-pack-size" placeholder="New pack size" min="1" />
+            <button onclick="addPack()">Add</button>
+        </div>
     </div>
 
     <div class="form-group">
@@ -134,10 +178,55 @@
             const packsList = document.getElementById('packs-list');
             packsList.innerHTML = data.packs
                 .sort((a, b) => a - b)
-                .map(pack => `<li>${pack.toLocaleString()} items</li>`)
+                .map(pack => `<li>
+                    <span>${pack.toLocaleString()} items</span>
+                    <button class="delete-btn" onclick="deletePack(${pack})" title="Delete pack">×</button>
+                </li>`)
                 .join('');
         } catch (err) {
             console.error('Failed to load packs:', err);
+        }
+    }
+
+    async function deletePack(packSize) {
+        if (!confirm(`Delete pack size ${packSize}?`)) {
+            return;
+        }
+        try {
+            const response = await fetch(`/packs/${packSize}`, {
+                method: 'DELETE'
+            });
+            if (!response.ok) {
+                throw new Error('Failed to delete pack');
+            }
+            loadPacks(); // Reload the list
+        } catch (err) {
+            console.error('Failed to delete pack:', err);
+            alert('Failed to delete pack');
+        }
+    }
+
+    async function addPack() {
+        const input = document.getElementById('new-pack-size');
+        const size = parseInt(input.value);
+        
+        if (!size || size <= 0) {
+            alert('Please enter a valid pack size');
+            return;
+        }
+
+        try {
+            const response = await fetch(`/packs/${size}`, {
+                method: 'POST'
+            });
+            if (!response.ok) {
+                throw new Error('Failed to add pack');
+            }
+            input.value = '';
+            loadPacks(); // Reload the list
+        } catch (err) {
+            console.error('Failed to add pack:', err);
+            alert('Failed to add pack');
         }
     }
 

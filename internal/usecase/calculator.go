@@ -20,7 +20,7 @@ func NewCalculator(packRepo interfaces.PackRepository) *Calculator {
 
 // TODO: fix the algorithm to minimize the number of packs used, not just a greedy approach
 func (c *Calculator) Calculate(ctx context.Context, input *dto.CalculateRequest) (*dto.CalculateResponse, error) {
-	packs := c.packRepo.GetPacks()
+	packs := c.packRepo.FindAll()
 
 	// pack size -> count
 	// easy to convert to response format later

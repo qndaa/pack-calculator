@@ -3,5 +3,7 @@ package interfaces
 import "github.com/qndaa/pack-calculator/internal/model/domain"
 
 type PackRepository interface {
-	GetPacks() domain.Packs
+	FindAll() domain.Packs
+	Delete(size int) error
+	Create(size int) error
 }

@@ -7,18 +7,18 @@ import (
 	"github.com/qndaa/pack-calculator/internal/repository/interfaces"
 )
 
-type PacksRetriever struct {
+type PackRetriever struct {
 	packRepo interfaces.PackRepository
 }
 
-func NewPacksRetriever(packRepo interfaces.PackRepository) *PacksRetriever {
-	return &PacksRetriever{
+func NewPackRetriever(packRepo interfaces.PackRepository) *PackRetriever {
+	return &PackRetriever{
 		packRepo: packRepo,
 	}
 }
 
-func (p *PacksRetriever) GetPacks(ctx context.Context) *dto.GetPacksResponse {
-	packs := p.packRepo.GetPacks()
+func (p *PackRetriever) GetPacks(ctx context.Context) *dto.GetPacksResponse {
+	packs := p.packRepo.FindAll()
 	return &dto.GetPacksResponse{
 		Packs: packs,
 	}

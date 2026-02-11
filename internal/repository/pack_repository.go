@@ -1,6 +1,8 @@
 package repository
 
 import (
+	"fmt"
+
 	"github.com/qndaa/pack-calculator/internal/model/domain"
 )
 
@@ -16,6 +18,28 @@ func NewPackRepository() (*PackRepository, error) {
 	}, nil
 }
 
-func (r *PackRepository) GetPacks() domain.Packs {
+func (r *PackRepository) FindAll() domain.Packs {
 	return r.packs
+}
+
+func (r *PackRepository) Delete(size int) error {
+	for i, pack := range r.packs {
+		if pack == size {
+			r.packs = append(r.packs[:i], r.packs[i+1:]...)
+			return nil
+		}
+	}
+	return fmt.Errorf("pack size %d not found", size)
+}
+
+func (r *PackRepository) Create(size int) error {
+	// Check if the pack already exists
+	for _, pack := range r.packs {
+		if pack == size {
+			return fmt.Errorf("pack size %d already exists", size)
+		}
+	}
+
+	r.packs = append(r.packs, size)
+	return nil
 }

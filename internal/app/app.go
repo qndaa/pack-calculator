@@ -26,8 +26,11 @@ func New() (*App, error) {
 	}
 
 	calculator := usecase.NewCalculator(packRepository)
-	packsRetriever := usecase.NewPacksRetriever(packRepository)
-	handler := server.NewHandler(calculator, packsRetriever)
+	packRetriever := usecase.NewPackRetriever(packRepository)
+	packRemover := usecase.NewPackRemover(packRepository)
+	packCreator := usecase.NewPackCreator(packRepository)
+
+	handler := server.NewHandler(calculator, packRetriever, packRemover, packCreator)
 
 	mux := http.NewServeMux()
 	handler.RegisterRoutes(mux)
