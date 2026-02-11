@@ -17,7 +17,6 @@ WORKDIR /app
 
 COPY --from=builder /app/server .
 COPY --from=builder /app/web ./web
-COPY --from=builder /app/packs.json .
 
 EXPOSE 8080
 

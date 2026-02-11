@@ -20,15 +20,14 @@ type App struct {
 }
 
 func New() (*App, error) {
-	cfg := NewConfig()
-
-	packRepository, err := repository.NewPackRepository(cfg.repositoryConfig)
+	packRepository, err := repository.NewPackRepository()
 	if err != nil {
 		return nil, err
 	}
 
 	calculator := usecase.NewCalculator(packRepository)
-	handler := server.NewHandler(calculator)
+	packsRetriever := usecase.NewPacksRetriever(packRepository)
+	handler := server.NewHandler(calculator, packsRetriever)
 
 	mux := http.NewServeMux()
 	handler.RegisterRoutes(mux)

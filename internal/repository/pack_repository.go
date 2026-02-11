@@ -1,10 +1,6 @@
 package repository
 
 import (
-	"encoding/json"
-	"fmt"
-	"os"
-
 	"github.com/qndaa/pack-calculator/internal/model/domain"
 )
 
@@ -13,24 +9,10 @@ type PackRepository struct {
 }
 
 // NewPackRepository loads packs from JSON file and stores them in memory
-func NewPackRepository(config *Config) (*PackRepository, error) {
-	// Read the packs from the JSON file, because we want to load them once and keep in memory for fast access
-	data, err := os.ReadFile(config.PacksFile)
-	if err != nil {
-		return nil, fmt.Errorf("failed to read packs file: %w", err)
-	}
-
-	var packs domain.Packs
-	if err := json.Unmarshal(data, &packs); err != nil {
-		return nil, fmt.Errorf("failed to parse packs file: %w", err)
-	}
-
-	if len(packs) == 0 {
-		return nil, fmt.Errorf("no packs defined in config")
-	}
-
+func NewPackRepository() (*PackRepository, error) {
+	// For simplicity, we hardcode the packs here. In a real application, you would load this from a Database or a JSON file.
 	return &PackRepository{
-		packs: packs,
+		packs: []int{250, 500, 1000, 2000, 5000},
 	}, nil
 }
 

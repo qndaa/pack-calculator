@@ -9,12 +9,17 @@ import (
 )
 
 type Handler struct {
-	calculatorUseCase interfaces.Calculator
+	calculatorUseCase     interfaces.Calculator
+	packsRetrieverUseCase interfaces.PacksRetriever
 }
 
-func NewHandler(calculatorUseCase interfaces.Calculator) *Handler {
+func NewHandler(
+	calculatorUseCase interfaces.Calculator,
+	packsRetrieverUseCase interfaces.PacksRetriever,
+) *Handler {
 	return &Handler{
-		calculatorUseCase: calculatorUseCase,
+		calculatorUseCase:     calculatorUseCase,
+		packsRetrieverUseCase: packsRetrieverUseCase,
 	}
 }
 
@@ -50,11 +55,7 @@ func (h *Handler) calculate(w http.ResponseWriter, r *http.Request) {
 }
 
 func (h *Handler) getPacks(w http.ResponseWriter, r *http.Request) {
-	result, err := h.calculatorUseCase.GetPacks(r.Context())
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	result := h.packsRetrieverUseCase.GetPacks(r.Context())
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(result)

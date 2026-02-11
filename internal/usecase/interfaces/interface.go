@@ -8,5 +8,8 @@ import (
 
 type Calculator interface {
 	Calculate(ctx context.Context, input *dto.CalculateRequest) (*dto.CalculateResponse, error)
-	GetPacks(ctx context.Context) (*dto.GetPacksResponse, error)
+}
+
+type PacksRetriever interface {
+	GetPacks(ctx context.Context) *dto.GetPacksResponse
 }
