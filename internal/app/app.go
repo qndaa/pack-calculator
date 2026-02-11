@@ -11,6 +11,7 @@ import (
 	"time"
 
 	"github.com/qndaa/pack-calculator/internal/server"
+	"github.com/qndaa/pack-calculator/internal/usecase"
 )
 
 type App struct {
@@ -18,7 +19,8 @@ type App struct {
 }
 
 func New() *App {
-	handler := server.NewHandler()
+	calculator := usecase.NewCalculator()
+	handler := server.NewHandler(calculator)
 
 	mux := http.NewServeMux()
 	handler.RegisterRoutes(mux)

@@ -1,16 +1,25 @@
 package server
 
-import "net/http"
+import (
+	"encoding/json"
+	"net/http"
+
+	"github.com/qndaa/pack-calculator/internal/model/dto"
+	"github.com/qndaa/pack-calculator/internal/usecase/interfaces"
+)
 
 type Handler struct {
+	calculatorUseCase interfaces.Calculator
 }
 
-func NewHandler() *Handler {
-	return &Handler{}
+func NewHandler(calculatorUseCase interfaces.Calculator) *Handler {
+	return &Handler{
+		calculatorUseCase: calculatorUseCase,
+	}
 }
 
 func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
-	mux.HandleFunc("POST /calculate", h.calculate) 
+	mux.HandleFunc("POST /calculate", h.calculate)
 
 	// Serve static UI
 	fs := http.FileServer(http.Dir("./web"))
@@ -18,7 +27,23 @@ func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
 }
 
 func (h *Handler) calculate(w http.ResponseWriter, r *http.Request) {
-	// TODO: implement calculation logic
-	w.WriteHeader(http.StatusNotImplemented)
-	w.Write([]byte("Not implemented yet"))
+	var req dto.CalculateRequest
+	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
+		http.Error(w, "invalid request body", http.StatusBadRequest)
+		return
+	}
+
+	if err := req.Validate(); err != nil {
+		http.Error(w, err.Error(), http.StatusBadRequest)
+		return
+	}
+
+	result, err := h.calculatorUseCase.Calculate(r.Context(), &req)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(result)
 }
