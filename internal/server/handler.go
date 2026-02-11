@@ -10,7 +10,7 @@ func NewHandler() *Handler {
 }
 
 func (h *Handler) RegisterRoutes(mux *http.ServeMux) {
-	mux.HandleFunc("POST /calculate", h.calculate) // TODO: implement calculation handler
+	mux.HandleFunc("POST /calculate", h.calculate) 
 
 	// Serve static UI
 	fs := http.FileServer(http.Dir("./web"))
